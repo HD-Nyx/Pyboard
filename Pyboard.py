@@ -1,0 +1,64 @@
+from PySide6.QtWidgets import QApplication, QComboBox, QFileDialog, QHBoxLayout, QListWidget, QMainWindow, QLabel, QPushButton, QStyle, QVBoxLayout, QWidget
+from PySide6.QtGui import QIcon, QPixmap
+from PySide6.QtCore import Qt, QTimer, QSettings
+
+from Assets.Scripts import InstallVB_Cable
+
+import sounddevice
+import sys
+
+# Check for vb-cable
+if not sounddevice.query_devices():
+    InstallVB_Cable.Install()
+else:
+    print("Devices founded from sounddevice ↓ ('>' = Input | '<' = Output) \n")
+    print(sounddevice.query_devices())
+
+
+class PyBoard(QMainWindow):
+
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle('PyBoard')
+        self.resize(1200, 800)
+        self._BuildUi()
+
+    def _BuildUi(self):
+        # Main Area
+        CentralArea = QWidget()
+        CentralArea.setStyleSheet("background: transparent;")
+        MainLayout = QHBoxLayout(CentralArea)
+        MainLayout.setContentsMargins(0, 0, 0, 0)
+        MainLayout.setSpacing(0)
+
+        # Sidebar
+        Sidebar = QWidget()
+        Sidebar.setFixedWidth(200)
+        SidebarLayout = QVBoxLayout(Sidebar)
+        SidebarLayout.setContentsMargins(8, 8, 8, 8)
+
+        self.SoundboardList = QListWidget()
+        self.SoundboardList.setStyleSheet("background: transparent; color: white; border: none;")
+        self.SoundboardList.addItems(["Memes", "Reactions", "Music"])
+
+        self.NewBoardButton = QPushButton("+ New Board")
+        self.NewBoardButton.setStyleSheet("color: white;")
+
+        SidebarLayout.addWidget(self.SoundboardList)
+        SidebarLayout.addWidget(self.NewBoardButton)
+
+        # Right Panel
+        self.RightPanel = QLabel("Select a soundboard")
+        self.RightPanel.setAlignment(Qt.AlignCenter)
+        self.RightPanel.setStyleSheet("background-color: rgba(20, 20, 20, 160); color: white;")
+
+        MainLayout.addWidget(Sidebar)
+        MainLayout.addWidget(self.RightPanel, stretch=1)
+
+        self.setCentralWidget(CentralArea)
+
+if __name__ == "__main__":
+    App = QApplication(sys.argv)
+    Window = PyBoard()
+    Window.show()
+    sys.exit(App.exec())
