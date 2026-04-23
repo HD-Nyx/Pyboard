@@ -1,8 +1,9 @@
-from PySide6.QtWidgets import QApplication, QComboBox, QFileDialog, QHBoxLayout, QListWidget, QMainWindow, QLabel, QPushButton, QStyle, QVBoxLayout, QWidget
-from PySide6.QtGui import QIcon, QPixmap
-from PySide6.QtCore import Qt, QTimer, QSettings
+from PySide6.QtWidgets import QApplication, QHBoxLayout, QListWidget, QMainWindow, QLabel, QPushButton, QVBoxLayout, QWidget, QInputDialog
+from PySide6.QtCore import Qt
 
+from Assets.Scripts.Soundboard import CreateSoundboard, DeleteSoundboard, GetSoundboards
 from Assets.Scripts import InstallVB_Cable
+
 
 import sounddevice
 import sys
@@ -14,7 +15,6 @@ else:
     print("Devices founded from sounddevice ↓ ('>' = Input | '<' = Output) \n")
     print(sounddevice.query_devices())
 
-
 class PyBoard(QMainWindow):
 
     def __init__(self):
@@ -22,6 +22,7 @@ class PyBoard(QMainWindow):
         self.setWindowTitle('PyBoard')
         self.resize(1200, 800)
         self._BuildUi()
+        self._LoadSoundboards()
 
     def _BuildUi(self):
         # Main Area
@@ -39,13 +40,18 @@ class PyBoard(QMainWindow):
 
         self.SoundboardList = QListWidget()
         self.SoundboardList.setStyleSheet("background: transparent; color: white; border: none;")
-        self.SoundboardList.addItems(["Memes", "Reactions", "Music"])
 
         self.NewBoardButton = QPushButton("+ New Board")
         self.NewBoardButton.setStyleSheet("color: white;")
+        self.NewBoardButton.clicked.connect(self._NewSoundboard)
+
+        self.DeleteBoardButton = QPushButton("- Delete Board")
+        self.DeleteBoardButton.setStyleSheet("color: white;")
+        self.DeleteBoardButton.clicked.connect(self._DeleteSoundboard)
 
         SidebarLayout.addWidget(self.SoundboardList)
         SidebarLayout.addWidget(self.NewBoardButton)
+        SidebarLayout.addWidget(self.DeleteBoardButton)
 
         # Right Panel
         self.RightPanel = QLabel("Select a soundboard")
@@ -56,6 +62,26 @@ class PyBoard(QMainWindow):
         MainLayout.addWidget(self.RightPanel, stretch=1)
 
         self.setCentralWidget(CentralArea)
+
+    # Soundboard functions in class
+    def _LoadSoundboards(self):
+        self.SoundboardList.clear()
+        self.SoundboardList.addItems(GetSoundboards())
+
+    def _NewSoundboard(self):
+        QApplication.beep()
+        Name, Ok = QInputDialog.getText(self, "New Soundboard", "Enter a name:")
+
+        if Ok and Name:
+            CreateSoundboard(Name)
+            self._LoadSoundboards()
+
+    def _DeleteSoundboard(self):
+        Current = self.SoundboardList.currentItem()
+
+        if Current:
+            DeleteSoundboard(Current.text())
+            self._LoadSoundboards()
 
 if __name__ == "__main__":
     App = QApplication(sys.argv)

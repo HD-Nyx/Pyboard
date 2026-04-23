@@ -4,18 +4,15 @@ import soundfile as SoundFile
 from threading import Thread
 import time
 
-AudioThread = None
-Sound, Sample = None, None
+Sound, Sample = SoundFile.read(r"C:\.Coding\GitHub\Pyboard\RAHHH.wav")
 
 def PlayAudio():
-    Sound, Sample = SoundFile.read("C:/Users/ryanz/downloaded_site/Documents/Audacity/Indian Villige Song.mp3")
-
     SoundDevice.play(Sound, Sample)
+
+    print("Played audio")
+
     SoundDevice.wait()
-    
-AudioThread = Thread(target = PlayAudio())
 
-def PauseAudio():
-    SoundDevice.stop()
-
+AudioThread = Thread(target=PlayAudio)
+AudioThread.name = "AudioThread"
 AudioThread.start()

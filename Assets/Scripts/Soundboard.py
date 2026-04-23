@@ -1,5 +1,7 @@
 import os
 
+# Soundboard is a group that contains audio instances
+
 SoundboardsPath = os.path.join(os.path.dirname(__file__), "../../Soundboards")
 
 def CreateSoundboard(Name: str):
@@ -19,6 +21,9 @@ def DeleteSoundboard(Name: str):
     else:
         return f'Soundboard {Name} not found'
     
-
+def GetSoundboards():
+    if os.path.exists(SoundboardsPath):
+        return os.listdir(SoundboardsPath)
+    return []
     
-
+CreateSoundboard(Name="mustured")
