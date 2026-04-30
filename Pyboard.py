@@ -4,16 +4,12 @@ from PySide6.QtCore import Qt
 from Assets.Scripts.Soundboard import CreateSoundboard, DeleteSoundboard, GetSoundboards
 from Assets.Scripts import InstallVB_Cable
 
-
 import sounddevice
 import sys
 
-# Check for vb-cable
-if not sounddevice.query_devices():
-    InstallVB_Cable.Install()
-else:
-    print("Devices founded from sounddevice ↓ ('>' = Input | '<' = Output) \n")
-    print(sounddevice.query_devices())
+
+print("Devices founded from sounddevice ↓ ('>' = Input | '<' = Output) \n")
+print(sounddevice.query_devices())
 
 class PyBoard(QMainWindow):
 
